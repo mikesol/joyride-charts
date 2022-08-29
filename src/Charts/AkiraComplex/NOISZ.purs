@@ -340,16 +340,16 @@ basic' m1 b1 m2 b2 m3 b3 m4 b4 = basic'' m1 b1 0.0 m2 b2 0.0 m3 b3 0.0 m4 b4 0.0
 
 intro1 :: Array Event_
 intro1 = join
-  [ long 2 One 5 One C7 4.0
-  , long 6 One 9 One C9 4.0
-  , long 10 One 12 One C6 3.0
+  [ long 2 One 5 One C7 2.0
+  , long 6 One 9 One C9 2.0
+  , long 10 One 12 One C6 1.5
   , leap 11 One 13 One C8 Position1
-  , long 12 One 14 One C10 3.0
+  , long 12 One 14 One C10 1.5
   , leap 13 One 15 One C8 Position2
-  , long 14 One 17 One C9 4.0
-  , long 16 One 19 One C7 2.0
+  , long 14 One 17 One C9 2.0
+  , long 16 One 19 One C7 1.0
   , leap 16 Three 17 Three C8 Position1
-  , long 17 One 19 One C8 2.0
+  , long 17 One 19 One C8 1.0
   , leap 17 Three 18 Three C8 Position2
   ]
 
@@ -412,8 +412,8 @@ ice1 = join
   , cascade2233 33 C8
   , cascade3344 33 C10
   , cascade4411 33 C10
-  , long 32 Three 34 One C4 4.0
-  , long 33 One 34 One C5 2.0
+  , long 32 Three 34 One C4 2.0
+  , long 33 One 34 One C5 1.0
   , leap 33 Three 34 One C6 Position1
   , leap 33 Four 34 Two C6 Position1
   ]
@@ -434,9 +434,9 @@ fight1 = join
     , leap1 n Three C6 Position3
     , leap1 n Four C5 Position4
     , leap1 (n + 1) One C7 Position1
-    , long (n + 1) Two (n + 3) Two C6 4.0
+    , long (n + 1) Two (n + 3) Two C6 2.0
     , leap1 (n + 1) Three C9 Position3
-    , long (n + 1) Four (n + 3) Four C4 4.0
+    , long (n + 1) Four (n + 3) Four C4 2.0
     ]
   fullPart = join
     [ cell1 34
