@@ -1,0 +1,141 @@
+-- | # NOISZ
+-- |
+-- | By Akira Complex
+-- |
+-- | Global form
+-- | 1-18  | 18-34       | 34-66 | 66-82  | 82-98        | 98-130 | 130-(146)-152
+-- | intro | ice / chain | fast  | intro2 | ice / chain2 | fast2  | outro (like intro)
+-- | ## m. 1-18
+-- | 
+-- | Intro
+-- |
+-- | Longs on appearances, the occasional red, very open feel
+-- |
+-- | ## m. 18-26
+-- |
+-- | First "ice on my writsts and chain on my neck."
+-- | Indivudal points floating in.
+-- |
+-- | ## m. 26-34
+-- |
+-- | Builds up.
+-- | Indivudal points floating in, means adding greens, in the mix in, biased right.
+-- | Left will be red right at the end
+-- |
+-- | ## m. 34-38
+-- |
+-- | Low density, high energy.
+-- | Give people the opportunity to jump.
+-- |
+-- | ## m. 38-42
+-- |
+-- | Sloowwww.
+-- | But lots of stuff. Thick
+-- |
+-- |
+-- | ## m. 42-46
+-- |
+-- | Low density, high energy.
+-- | Give people the opportunity to jump. A bit more spread than m. 34.
+-- |
+-- | ## m. 46-50
+-- |
+-- | Sloowwww.
+-- | Lots of stuff, leads people to the right.
+-- |
+-- | ## m. 50-54
+-- |
+-- | Low density, high energy.
+-- | Trails left, settles far left.
+-- |
+-- | ## m. 54-58
+-- |
+-- | Sloowwww.
+-- | Flanking tiles trending right immediately.
+-- |                              ---
+-- |                  ---
+-- |         ---
+-- | ---
+-- |
+-- | ## m. 58-62
+-- |
+-- | Low density, high energy.
+-- | All over the map
+-- |
+-- | ## m. 62-66
+-- |
+-- | Sloowwww.
+-- | Mega-reward for the front. Very broad & slow.
+-- |
+-- | ## m. 66-74
+-- |
+-- | Spacey.
+-- | Lots of greens.
+-- |
+-- | ## m. 72-82
+-- |
+-- | Still spacey.
+-- | But intersperse some red.
+-- | 
+-- | ## m. 82-90
+-- |
+-- | Second "ice on my writsts and chain on my neck."
+-- | 1-per beat, débit constant
+-- |
+-- | ## m. 90-94
+-- |
+-- | Second "ice on my writsts and chain on my neck."
+-- | Staggered motion, things catching up with other things
+-- |
+-- | ## m. 94-98
+-- |
+-- | Two staggers across the field
+-- | First slow
+-- | Second following fast
+-- |
+-- | ## m. 98-102
+-- |
+-- | Slow, allow jumps, but now with a green to distract
+-- |
+-- |
+-- | ## m. 102-106
+-- |
+-- | Mega thick
+-- |
+-- | ## m. 106-110
+-- |
+-- | Isolated reds, very spread, push to front
+-- |
+-- | ## m. 110-114
+-- |
+-- | Huge reward for front, nothing for back
+-- | Happens twice
+-- |
+-- | ## m. 114-118
+-- |
+-- | Isolated reds, very consolodated, push to back
+-- |
+-- | ## m. 118-122
+-- |
+-- | Huge reward for back, nothing for front
+-- | Happens twice
+-- | Add green to shake stuff up?
+-- |
+-- | ## m. 122-126
+-- |
+-- | Somewhat dense
+-- |
+-- | ## m. 126-130
+-- |
+-- | Mega dense in first 2m
+-- | Whittles down to almost nothing (or sudden to nothing) in middle
+-- |
+-- | ## m. 130-146
+-- |
+-- | Greens with the occassional red
+-- | 
+-- | ## m. 146-out
+-- | Only reds to 1 very slow green
+module Charts.AkiraComplex.NOISZ where
+
+import Prelude
