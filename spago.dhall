@@ -14,11 +14,16 @@ to generate this file without the comments in this block.
 , dependencies =
   [ "console"
   , "effect"
+  , "exceptions"
+  , "foldable-traversable"
+  , "foreign"
   , "integers"
   , "joyride-types"
   , "maybe"
   , "prelude"
   , "simple-json"
+  , "transformers"
+  , "validation"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

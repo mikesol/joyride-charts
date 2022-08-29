@@ -9,4 +9,4 @@ import Simple.JSON as JSON
 
 main :: Effect Unit
 main = do
-  log $ JSON.writeJSON NOISZ.piece
+  NOISZ.piece >>= log <<< JSON.writeJSON 

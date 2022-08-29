@@ -140,8 +140,13 @@ module Charts.AkiraComplex.NOISZ where
 
 import Prelude
 
+import Control.Monad.Error.Class (class MonadThrow, throwError)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
+import Data.TraversableWithIndex (traverseWithIndex)
+import Data.Validation.Semigroup (V, invalid, validation)
+import Effect.Exception (Error, error)
+import Foreign (ForeignError(..), MultipleErrors)
 import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..))
 
 data OneTwoThreeFour = One | Two | Three | Four
@@ -205,13 +210,13 @@ basic' m1 b1 m2 b2 m3 b3 m4 b4 column = EventV0 $ BasicEventV0
   , version: mempty
   }
 
-intro :: Array Event_
-intro =
+intro1 :: Array Event_
+intro1 =
   [ long 2 One 5 One C7 4.0
   , long 6 One 9 One C9 4.0
   , long 10 One 12 One C6 3.0
   , leap 11 One 13 One C8 Position1
-  , long 12 One 12 One C10 3.0
+  , long 12 One 14 One C10 3.0
   , leap 13 One 15 One C8 Position2
   , long 14 One 17 One C9 4.0
   , long 16 One 19 One C7 2.0
@@ -220,14 +225,80 @@ intro =
   , leap 17 Three 18 Three C8 Position2
   ]
 
-piece :: { track :: Track, events :: Array Event_ }
-piece =
-  { track: TrackV0
-      { version: mempty
-      , url: "https://cdn.filestackcontent.com/kG1ZasfRPSvsRd2QAMux"
-      , title: Just "NOISZ"
-      , private: true
-      , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
-      }
-  , events: intro
-  }
+ice1 :: Array Event_
+ice1 =
+  [
+  ]
+
+fight1 :: Array Event_
+fight1 =
+  [
+  ]
+
+intro2 :: Array Event_
+intro2 =
+  [
+  ]
+
+ice2 :: Array Event_
+ice2 =
+  [
+  ]
+
+fight2 :: Array Event_
+fight2 =
+  [
+  ]
+
+outro :: Array Event_
+outro =
+  [
+  ]
+
+type Events = V MultipleErrors (Array Event_)
+
+noDice :: forall res. Int -> String -> V MultipleErrors res
+noDice i s = invalid $ pure (ErrorAtIndex i (ForeignError s))
+
+validateEvents :: Array Event_ -> Events
+validateEvents = traverseWithIndex \i -> case _ of
+  EventV0 e -> case e of
+    BasicEventV0 be ->
+      if be.marker1Time >= be.marker2Time then
+        noDice i ("Marker 1 time inconsistent: " <> show be.marker1Time <> "should be less than " <> show be.marker2Time)
+      else if be.marker2Time >= be.marker3Time then
+        noDice i ("Marker 2 time inconsistent: " <> show be.marker2Time <> "should be less than " <> show be.marker3Time)
+      else if be.marker3Time >= be.marker4Time then
+        noDice i ("Marker 3 time inconsistent: " <> show be.marker2Time <> "should be less than " <> show be.marker4Time)
+      else if be.marker1Time < 0.0 then
+        noDice i ("Marker 1 time should be positive, got: " <> show be.marker1Time)
+      else pure $ EventV0 $ BasicEventV0 be
+    LeapEventV0 le -> 
+      if le.marker1Time >= le.marker2Time then
+        noDice i ("Marker 1 time inconsistent: " <> show le.marker1Time <> "should be less than " <> show le.marker2Time)
+      else if le.marker1Time < 0.0 then
+        noDice i ("Marker 1 time should be positive, got: " <> show le.marker1Time)
+      else pure $ EventV0 $ LeapEventV0 le
+    LongEventV0 le ->
+      if le.marker1Time >= le.marker2Time then
+        noDice i ("Marker 1 time inconsistent: " <> show le.marker1Time <> "should be less than " <> show le.marker2Time)
+      else if le.marker1Time < 0.0 then
+        noDice i ("Marker 1 time should be positive, got: " <> show le.marker1Time)
+      else if le.length <= 0.0 then
+        noDice i ("Length must be positive, got: " <> show le.length)
+      else pure $ EventV0 $ LongEventV0 le
+
+piece :: forall m. MonadThrow Error m => m { track :: Track, events :: Array Event_ }
+piece = do
+  let events' = intro1 <> ice1 <> fight1 <> intro2 <> ice2 <> fight2 <> outro
+  events <- validation (throwError <<< error <<< show) pure (validateEvents events')
+  pure
+    { track: TrackV0
+        { version: mempty
+        , url: "https://cdn.filestackcontent.com/kG1ZasfRPSvsRd2QAMux"
+        , title: Just "NOISZ"
+        , private: true
+        , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
+        }
+    , events
+    }
