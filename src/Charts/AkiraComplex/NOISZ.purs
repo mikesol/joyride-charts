@@ -142,7 +142,7 @@ import Prelude
 
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
-import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..))
+import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..))
 
 data OneTwoThreeFour = One | Two | Three | Four
 
@@ -219,3 +219,15 @@ intro =
   , long 17 One 19 One C8 2.0
   , leap 17 Three 18 Three C8 Position2
   ]
+
+piece :: { track :: Track, events :: Array Event_ }
+piece =
+  { track: TrackV0
+      { version: mempty
+      , url: "https://cdn.filestackcontent.com/kG1ZasfRPSvsRd2QAMux"
+      , title: Just "NOISZ"
+      , private: true
+      , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
+      }
+  , events: intro
+  }
