@@ -347,9 +347,9 @@ intro1 = join
   , long 12 One 14 One C10 1.5
   , leap 13 One 15 One C8 Position2
   , long 14 One 17 One C9 2.0
-  , long 16 One 19 One C7 1.0
+  , long 16 One 19 One C10 1.0
   , leap 16 Three 17 Three C8 Position1
-  , long 17 One 19 One C8 1.0
+  , long 17 One 19 One C5 1.0
   , leap 17 Three 18 Three C8 Position2
   ]
 
