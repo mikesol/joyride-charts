@@ -141,6 +141,8 @@ module Charts.AkiraComplex.NOISZ where
 import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, throwError)
+import Data.Array (sortBy)
+import Data.Function (on)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Data.TraversableWithIndex (traverseWithIndex)
@@ -188,6 +190,30 @@ leap startM startB endM endB column position = EventV0 $ LeapEventV0
   , version: mempty
   }
 
+basic1313 :: Int -> Column -> Event_
+basic1313 i = basic i One Three One Three
+
+basic2424 :: Int -> Column -> Event_
+basic2424 i = basic i Two Four Two Four
+
+basic3131 :: Int -> Column -> Event_
+basic3131 i = basic i Three One Three One
+
+basic4242 :: Int -> Column -> Event_
+basic4242 i = basic i Four Two Four Two
+
+basic1234 :: Int -> Column -> Event_
+basic1234 i = basic i One Two Three Four
+
+basic2341 :: Int -> Column -> Event_
+basic2341 i = basic i Two Three Four One
+
+basic3412 :: Int -> Column -> Event_
+basic3412 i = basic i Three Four One Two
+
+basic4123 :: Int -> Column -> Event_
+basic4123 i = basic i Four One Two Three
+
 basic :: Int -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> Column -> Event_
 basic m1 b1 b2 b3 b4 = basic' m1 b1 m2 b2 m3 b3 m4 b4
   where
@@ -227,7 +253,27 @@ intro1 =
 
 ice1 :: Array Event_
 ice1 =
-  [
+  [ basic1313 18 C7
+  , basic1313 20 C9
+  , basic1313 22 C7
+  , basic1313 23 C7
+  , basic1313 24 C9
+  , basic1313 25 C9
+  , basic3131 25 C9
+  , basic4242 25 C9
+  --
+  , basic1313 26 C6
+  , basic2424 26 C7
+  , basic3131 26 C6
+  , basic4242 26 C7
+  , basic1313 27 C6
+  , basic2424 27 C7
+  , basic3131 27 C6
+  , basic4242 27 C7
+  , basic1313 27 C8
+  , basic2424 27 C9
+  , basic3131 27 C8
+  , basic4242 27 C9
   ]
 
 fight1 :: Array Event_
@@ -273,7 +319,7 @@ validateEvents = traverseWithIndex \i -> case _ of
       else if be.marker1Time < 0.0 then
         noDice i ("Marker 1 time should be positive, got: " <> show be.marker1Time)
       else pure $ EventV0 $ BasicEventV0 be
-    LeapEventV0 le -> 
+    LeapEventV0 le ->
       if le.marker1Time >= le.marker2Time then
         noDice i ("Marker 1 time inconsistent: " <> show le.marker1Time <> "should be less than " <> show le.marker2Time)
       else if le.marker1Time < 0.0 then
@@ -300,5 +346,11 @@ piece = do
         , private: true
         , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
         }
-    , events
+    , events: events # sortBy
+        ( compare `on` case _ of
+            EventV0 e -> case e of
+              BasicEventV0 ee -> ee.marker1Time
+              LeapEventV0 ee -> ee.marker1Time
+              LongEventV0 ee -> ee.marker1Time
+        )
     }
