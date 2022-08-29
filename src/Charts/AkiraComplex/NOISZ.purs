@@ -141,7 +141,8 @@ module Charts.AkiraComplex.NOISZ where
 import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, throwError)
-import Data.Array (sortBy)
+import Data.Array (cons, sortBy)
+import Data.Foldable (foldl)
 import Data.Function (on)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
@@ -166,10 +167,13 @@ tempo :: Int
 tempo = 170
 
 mbToTime :: Int -> OneTwoThreeFour -> Number
-mbToTime m b = toNumber ((((m - 1) * 4) + (asInt b - 1)) * 60) / (toNumber tempo)
+mbToTime m b = mbsToTime m b 0.0
 
-long :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Number -> Event_
-long startM startB endM endB column length = EventV0 $ LongEventV0
+mbsToTime :: Int -> OneTwoThreeFour -> Number -> Number
+mbsToTime m b s = (toNumber ((((m - 1) * 4) + (asInt b - 1))) + s) * 60.0 / (toNumber tempo)
+
+long :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Number -> Array Event_
+long startM startB endM endB column length = pure $ EventV0 $ LongEventV0
   { marker1Time: mbToTime startM startB
   , marker2Time: mbToTime endM endB
   , audioURL: Nothing
@@ -179,8 +183,9 @@ long startM startB endM endB column length = EventV0 $ LongEventV0
   , version: mempty
   }
 
-leap :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Position -> Event_
-leap startM startB endM endB column position = EventV0 $ LeapEventV0
+
+leap :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Position -> Array Event_
+leap startM startB endM endB column position = pure $ EventV0 $ LeapEventV0
   { marker1Time: mbToTime startM startB
   , marker2Time: mbToTime endM endB
   , audioURL: Nothing
@@ -190,43 +195,137 @@ leap startM startB endM endB column position = EventV0 $ LeapEventV0
   , version: mempty
   }
 
-basic1313 :: Int -> Column -> Event_
+leap1 :: Int -> OneTwoThreeFour -> Column -> Position -> Array Event_
+leap1 i n = leap i n (i + 1) n
+
+shift' :: Int -> OneTwoThreeFour -> Event_ -> Event_
+shift' i b = shift $ toNumber ((i * 4) + asInt b)
+
+shift'' :: Int -> Event_ -> Event_
+shift'' i = shift $ toNumber (i * 4)
+
+flipColumn :: Column -> Column
+flipColumn C1 = C16
+flipColumn C2 = C15
+flipColumn C3 = C14
+flipColumn C4 = C13
+flipColumn C5 = C12
+flipColumn C6 = C11
+flipColumn C7 = C10
+flipColumn C8 = C9
+flipColumn C9 = C8
+flipColumn C10 = C7
+flipColumn C11 = C6
+flipColumn C12 = C5
+flipColumn C13 = C4
+flipColumn C14 = C3
+flipColumn C15 = C2
+flipColumn C16 = C1
+
+mirror :: Event_ -> Event_
+mirror = toColumn flipColumn
+
+toColumn :: (Column -> Column) -> Event_ -> Event_
+toColumn f = go
+  where
+  go (EventV0 (BasicEventV0 e)) = EventV0 $ BasicEventV0 $ e
+    { column = f e.column
+    }
+  go (EventV0 (LeapEventV0 e)) = EventV0 $ LeapEventV0 e
+    { column = f e.column
+    }
+  go (EventV0 (LongEventV0 e)) = EventV0 $ LongEventV0 e
+    { column = f e.column
+    }
+shift :: Number -> Event_ -> Event_
+shift n' = go
+  where
+  n = n' * 60.0 / toNumber tempo
+  go (EventV0 (BasicEventV0 e)) = EventV0 $ BasicEventV0 $ e
+    { marker1Time = e.marker1Time + n
+    , marker2Time = e.marker2Time + n
+    , marker3Time = e.marker3Time + n
+    , marker4Time = e.marker4Time + n
+    }
+  go (EventV0 (LeapEventV0 e)) = EventV0 $ LeapEventV0 e
+    { marker1Time = e.marker1Time + n
+    , marker2Time = e.marker2Time + n
+    }
+  go (EventV0 (LongEventV0 e)) = EventV0 $ LongEventV0 e
+    { marker1Time = e.marker1Time + n
+    , marker2Time = e.marker2Time + n
+    }
+
+dilate :: Number -> Event_ -> Event_
+dilate n = go
+  where
+  go (EventV0 (BasicEventV0 e)) = EventV0 $ BasicEventV0 $ e
+    { marker1Time = e.marker1Time
+    , marker2Time = (e.marker2Time - e.marker1Time) * n + e.marker1Time
+    , marker3Time = (e.marker3Time - e.marker1Time) * n + e.marker1Time
+    , marker4Time = (e.marker4Time - e.marker1Time) * n + e.marker1Time
+    }
+  go (EventV0 (LeapEventV0 e)) = EventV0 $ LeapEventV0 e
+    { marker1Time = e.marker1Time
+    , marker2Time = (e.marker2Time - e.marker1Time) * n + e.marker1Time
+    }
+  go (EventV0 (LongEventV0 e)) = EventV0 $ LongEventV0 e
+    { marker1Time = e.marker1Time
+    , marker2Time = (e.marker2Time - e.marker1Time) * n + e.marker1Time
+    }
+
+basic1313 :: Int -> Column -> Array Event_
 basic1313 i = basic i One Three One Three
 
-basic2424 :: Int -> Column -> Event_
+basic2424 :: Int -> Column -> Array Event_
 basic2424 i = basic i Two Four Two Four
 
-basic3131 :: Int -> Column -> Event_
+basic3131 :: Int -> Column -> Array Event_
 basic3131 i = basic i Three One Three One
 
-basic4242 :: Int -> Column -> Event_
+basic4242 :: Int -> Column -> Array Event_
 basic4242 i = basic i Four Two Four Two
 
-basic1234 :: Int -> Column -> Event_
+basic1234 :: Int -> Column -> Array Event_
 basic1234 i = basic i One Two Three Four
 
-basic2341 :: Int -> Column -> Event_
+basic2341 :: Int -> Column -> Array Event_
 basic2341 i = basic i Two Three Four One
 
-basic3412 :: Int -> Column -> Event_
+basic3412 :: Int -> Column -> Array Event_
 basic3412 i = basic i Three Four One Two
 
-basic4123 :: Int -> Column -> Event_
+basic4123 :: Int -> Column -> Array Event_
 basic4123 i = basic i Four One Two Three
 
-basic :: Int -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> Column -> Event_
+cascade1122 :: Int -> Column -> Array Event_
+cascade1122 i c = basic'' i One 0.0 i One 0.5 i Two 0.0 i Two 0.5 c
+  <> basic'' i One 0.5 i Two 0.0 i Two 0.5 i Three 0.0 (c <> C1)
+  <> basic'' i Two 0.0 i Two 0.5 i Three 0.0 i Three 0.5 (c <> C2)
+  <> basic'' i Two 0.5 i Three 0.0 i Three 0.5 i Four 0.0 (c <> C3)
+
+cascade2233 :: Int -> Column -> Array Event_
+cascade2233 i c = map (shift 1.0) $ cascade1122 i c
+
+cascade3344 :: Int -> Column -> Array Event_
+cascade3344 i c = map (shift 2.0) $ cascade1122 i c
+
+cascade4411 :: Int -> Column -> Array Event_
+cascade4411 i c = map (shift 3.0) $ cascade1122 i c
+
+basic :: Int -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> Column -> Array Event_
 basic m1 b1 b2 b3 b4 = basic' m1 b1 m2 b2 m3 b3 m4 b4
   where
   m2 = if b2 <= b1 then m1 + 1 else m1
   m3 = if b3 <= b2 then m2 + 1 else m2
   m4 = if b4 <= b3 then m3 + 1 else m3
 
-basic' :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Event_
-basic' m1 b1 m2 b2 m3 b3 m4 b4 column = EventV0 $ BasicEventV0
-  { marker1Time: mbToTime m1 b1
-  , marker2Time: mbToTime m2 b2
-  , marker3Time: mbToTime m3 b3
-  , marker4Time: mbToTime m4 b4
+basic'' :: Int -> OneTwoThreeFour -> Number -> Int -> OneTwoThreeFour -> Number -> Int -> OneTwoThreeFour -> Number -> Int -> OneTwoThreeFour -> Number -> Column -> Array Event_
+basic'' m1 b1 s1 m2 b2 s2 m3 b3 s3 m4 b4 s4 column = pure $ EventV0 $ BasicEventV0
+  { marker1Time: mbsToTime m1 b1 s1
+  , marker2Time: mbsToTime m2 b2 s2
+  , marker3Time: mbsToTime m3 b3 s3
+  , marker4Time: mbsToTime m4 b4 s4
   , marker1AudioURL: Nothing
   , marker2AudioURL: Nothing
   , marker3AudioURL: Nothing
@@ -236,8 +335,11 @@ basic' m1 b1 m2 b2 m3 b3 m4 b4 column = EventV0 $ BasicEventV0
   , version: mempty
   }
 
+basic' :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Array Event_
+basic' m1 b1 m2 b2 m3 b3 m4 b4 = basic'' m1 b1 0.0 m2 b2 0.0 m3 b3 0.0 m4 b4 0.0
+
 intro1 :: Array Event_
-intro1 =
+intro1 = join
   [ long 2 One 5 One C7 4.0
   , long 6 One 9 One C9 4.0
   , long 10 One 12 One C6 3.0
@@ -252,7 +354,7 @@ intro1 =
   ]
 
 ice1 :: Array Event_
-ice1 =
+ice1 = join
   [ basic1313 18 C7
   , basic1313 20 C9
   , basic1313 22 C7
@@ -261,11 +363,12 @@ ice1 =
   , basic1313 25 C9
   , basic3131 25 C9
   , basic4242 25 C9
-  --
+  -----------------
   , basic1313 26 C6
   , basic2424 26 C7
   , basic3131 26 C6
   , basic4242 26 C7
+  --
   , basic1313 27 C6
   , basic2424 27 C7
   , basic3131 27 C6
@@ -274,32 +377,116 @@ ice1 =
   , basic2424 27 C9
   , basic3131 27 C8
   , basic4242 27 C9
+  --
+  , basic1234 28 C5
+  , basic1234 28 C6
+  , basic2341 28 C7
+  , basic2341 28 C8
+  , basic3412 28 C9
+  , basic4123 28 C10
+  , basic4123 28 C11
+  , basic4123 28 C12
+  --
+  , basic1234 29 C4
+  , basic1234 29 C6
+  , basic1234 29 C7
+  , basic2341 29 C5
+  , basic2341 29 C6
+  , basic2341 29 C8
+  , basic3412 29 C6
+  , basic3412 29 C7
+  , basic3412 29 C9
+  , basic4123 29 C7
+  , basic4123 29 C8
+  , basic4123 29 C10
+  --
+  , cascade1122 30 C4
+  , cascade3344 30 C6
+  , cascade1122 31 C8
+  , cascade3344 31 C10
+  , cascade1122 32 C4
+  , cascade2233 32 C4
+  , cascade3344 32 C6
+  , cascade4411 32 C6
+  , cascade1122 33 C8
+  , cascade2233 33 C8
+  , cascade3344 33 C10
+  , cascade4411 33 C10
+  , long 32 Three 34 One C4 4.0
+  , long 33 One 34 One C5 2.0
+  , leap 33 Three 34 One C6 Position1
+  , leap 33 Four 34 Two C6 Position1
   ]
 
 fight1 :: Array Event_
-fight1 =
-  [
+fight1 = join
+  [ fullPart
+  , map (mirror <<< shift'' 8) fullPart
+  , echoDilated $ map (shift'' 16) fullPart
+  , echoDilated $ map (mirror <<< shift'' 24) fullPart
   ]
+  where
+  echoDilated :: Array Event_ -> Array Event_
+  echoDilated = foldl (\b a -> [ a, dilate 2.0 $ toColumn (_ <> C8) a ] <> b) []
+  cell1 n = join
+    [ leap1 n One C7 Position1
+    , leap1 n Two C9 Position2
+    , leap1 n Three C6 Position3
+    , leap1 n Four C5 Position4
+    , leap1 (n + 1) One C7 Position1
+    , long (n + 1) Two (n + 3) Two C6 4.0
+    , leap1 (n + 1) Three C9 Position3
+    , long (n + 1) Four (n + 3) Four C4 4.0
+    ]
+  fullPart = join
+    [ cell1 34
+    , cell1 36
+    , basic 37 Three Four One Two C7
+    , basic 37 Four One Two Three C7
+    , basic1313 38 C3
+    , basic1313 38 C4
+    , basic1313 38 C5
+    , basic1313 38 C6
+    , basic3131 38 C7
+    , basic3131 38 C8
+    , basic3131 38 C9
+    , basic3131 38 C10
+    , basic1313 39 C11
+    , basic1313 39 C12
+    , basic3131 39 C13
+    , leap 39 Four 40 Two C11 Position1
+    , basic1313 40 C3
+    , basic1313 40 C4
+    , basic1313 40 C5
+    , basic1313 40 C6
+    , basic2424 40 C5
+    , basic2424 40 C6
+    , basic3131 40 C7
+    , basic3131 40 C8
+    , basic3131 40 C9
+    , basic3131 40 C10
+    , basic4242 40 C9
+    , basic4242 40 C10
+    , basic1313 41 C11
+    , basic1313 41 C12
+    , basic2424 41 C12
+    , basic3131 41 C13
+    , basic4242 41 C13
+    , leap 41 Four 42 Two C11 Position1
+    ]
 
 intro2 :: Array Event_
-intro2 =
-  [
-  ]
+intro2 = map (shift'' 64) intro1
+
 
 ice2 :: Array Event_
-ice2 =
-  [
-  ]
+ice2 = map (shift'' 64) ice1
 
 fight2 :: Array Event_
-fight2 =
-  [
-  ]
+fight2 = map (shift'' 64) fight1
 
 outro :: Array Event_
-outro =
-  [
-  ]
+outro = map (shift'' 128) intro1
 
 type Events = V MultipleErrors (Array Event_)
 
