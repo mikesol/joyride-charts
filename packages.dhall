@@ -43,7 +43,7 @@ let overrides =
         , version = "v0.1.1"
         }
       , joyride-types =
-        { dependencies = [ "either" ]
+        { dependencies = [ "either", "simple-json", "maybe" ]
         , repo = "https://github.com/mikesol/joyride-types.git"
         , version = "v0.0.1"
         }

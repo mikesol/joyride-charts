@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "spago build",
+    "start": "spago run",
     "test": "spago -x test.dhall test"
   },
   "author": "Mike Solomon",
