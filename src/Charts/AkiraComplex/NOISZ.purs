@@ -139,3 +139,83 @@
 module Charts.AkiraComplex.NOISZ where
 
 import Prelude
+
+import Data.Int (toNumber)
+import Data.Maybe (Maybe(..))
+import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..))
+
+data OneTwoThreeFour = One | Two | Three | Four
+
+derive instance Eq OneTwoThreeFour
+derive instance Ord OneTwoThreeFour
+
+asInt :: OneTwoThreeFour -> Int
+asInt One = 1
+asInt Two = 2
+asInt Three = 3
+asInt Four = 4
+
+tempo :: Int
+tempo = 170
+
+mbToTime :: Int -> OneTwoThreeFour -> Number
+mbToTime m b = toNumber ((((m - 1) * 4) + (asInt b - 1)) * 60) / (toNumber tempo)
+
+long :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Number -> Event_
+long startM startB endM endB column length = EventV0 $ LongEventV0
+  { marker1Time: mbToTime startM startB
+  , marker2Time: mbToTime endM endB
+  , audioURL: Nothing
+  , column
+  , length
+  , name: Nothing
+  , version: mempty
+  }
+
+leap :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Position -> Event_
+leap startM startB endM endB column position = EventV0 $ LeapEventV0
+  { marker1Time: mbToTime startM startB
+  , marker2Time: mbToTime endM endB
+  , audioURL: Nothing
+  , column
+  , position
+  , name: Nothing
+  , version: mempty
+  }
+
+basic :: Int -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> OneTwoThreeFour -> Column -> Event_
+basic m1 b1 b2 b3 b4 = basic' m1 b1 m2 b2 m3 b3 m4 b4
+  where
+  m2 = if b2 <= b1 then m1 + 1 else m1
+  m3 = if b3 <= b2 then m2 + 1 else m2
+  m4 = if b4 <= b3 then m3 + 1 else m3
+
+basic' :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Event_
+basic' m1 b1 m2 b2 m3 b3 m4 b4 column = EventV0 $ BasicEventV0
+  { marker1Time: mbToTime m1 b1
+  , marker2Time: mbToTime m2 b2
+  , marker3Time: mbToTime m3 b3
+  , marker4Time: mbToTime m4 b4
+  , marker1AudioURL: Nothing
+  , marker2AudioURL: Nothing
+  , marker3AudioURL: Nothing
+  , marker4AudioURL: Nothing
+  , column
+  , name: Nothing
+  , version: mempty
+  }
+
+intro :: Array Event_
+intro =
+  [ long 2 One 5 One C7 4.0
+  , long 6 One 9 One C9 4.0
+  , long 10 One 12 One C6 3.0
+  , leap 11 One 13 One C8 Position1
+  , long 12 One 12 One C10 3.0
+  , leap 13 One 15 One C8 Position2
+  , long 14 One 17 One C9 4.0
+  , long 16 One 19 One C7 2.0
+  , leap 16 Three 17 Three C8 Position1
+  , long 17 One 19 One C8 2.0
+  , leap 17 Three 18 Three C8 Position2
+  ]
