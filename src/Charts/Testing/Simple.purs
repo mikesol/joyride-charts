@@ -1,9 +1,9 @@
-module Charts.Testing.Stress where
+module Charts.Testing.Simple where
 
 import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, throwError)
-import Data.Array (cons, sortBy, (..))
+import Data.Array (sortBy, (..))
 import Data.Foldable (foldl)
 import Data.Function (on)
 import Data.Int (toNumber)
@@ -12,7 +12,7 @@ import Data.TraversableWithIndex (traverseWithIndex)
 import Data.Validation.Semigroup (V, invalid, validation)
 import Effect.Exception (Error, error)
 import Foreign (ForeignError(..), MultipleErrors)
-import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..))
+import Joyride.Types (Column(..), EventV0(..), Event_(..), Position, Track(..))
 
 data OneTwoThreeFour = One | Two | Three | Four
 
@@ -174,9 +174,9 @@ basic' :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThree
 basic' m1 b1 m2 b2 m3 b3 m4 b4 = basic'' m1 b1 0.0 m2 b2 0.0 m3 b3 0.0 m4 b4 0.0
 
 everything :: Array Event_
-everything = join (full <$> (1 .. 128))
+everything = join (full <<< mul 2 <$> (1 .. 128))
   where
-  full n = (foldl (\b _ -> { i: b.i <> C1, a: basic1313 n b.i <> b.a }) { i: C1, a: [] } (0 .. 15)).a
+  full n = (foldl (\b _ -> { i: b.i <> C1, a: basic1313 n b.i <> b.a }) { i: C7, a: [] } (8 .. 8)).a
 
 type Events = V MultipleErrors (Array Event_)
 
