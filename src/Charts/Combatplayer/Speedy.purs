@@ -31,7 +31,7 @@ asInt Three = 3
 asInt Four = 4
 
 tempo :: Int
-tempo = 170
+tempo = 168
 
 mbToTime :: Int -> OneTwoThreeFour -> Number
 mbToTime m b = mbsToTime m b 0.0
