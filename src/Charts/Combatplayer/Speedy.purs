@@ -8,7 +8,7 @@ module Charts.Combatplayer.Speedy where
 import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, throwError)
-import Data.Array (cons, sortBy)
+import Data.Array (sortBy)
 import Data.Foldable (foldl)
 import Data.Function (on)
 import Data.Int (toNumber)
