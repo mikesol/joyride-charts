@@ -12,7 +12,7 @@ import Data.TraversableWithIndex (traverseWithIndex)
 import Data.Validation.Semigroup (V, invalid, validation)
 import Effect.Exception (Error, error)
 import Foreign (ForeignError(..), MultipleErrors)
-import Joyride.Types (Column(..), EventV0(..), Event_(..), Position, Track(..))
+import Joyride.Types (Column(..), EventV0(..), Event_(..), Position, Track(..), Whitelist(..))
 
 data OneTwoThreeFour = One | Two | Three | Four
 
@@ -221,6 +221,7 @@ piece = do
         , url: "https://cdn.filestackcontent.com/kG1ZasfRPSvsRd2QAMux"
         , title: Just "NOISZ"
         , private: false
+        , whitelist: Whitelist []
         , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
         }
     , events: events # sortBy

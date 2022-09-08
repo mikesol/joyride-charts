@@ -2,6 +2,8 @@
 -- |
 -- | By Combatplayer
 -- |
+-- | | 1 - 17  | 17 - 33  | 33 - 49       | 49 - 65 | 65 - 81 | 81 - 97 | 97 - 113 |
+-- | | Intro   | Speedy   | Speedy + pizz | Speedy  | Intro   | Speedy  | Outro    |
 
 module Charts.Combatplayer.Speedy where
 
@@ -9,7 +11,6 @@ import Prelude
 
 import Control.Monad.Error.Class (class MonadThrow, throwError)
 import Data.Array (sortBy)
-import Data.Foldable (foldl)
 import Data.Function (on)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
@@ -17,7 +18,7 @@ import Data.TraversableWithIndex (traverseWithIndex)
 import Data.Validation.Semigroup (V, invalid, validation)
 import Effect.Exception (Error, error)
 import Foreign (ForeignError(..), MultipleErrors)
-import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..))
+import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..), Whitelist(..))
 
 data OneTwoThreeFour = One | Two | Three | Four
 
@@ -50,7 +51,6 @@ long startM startB endM endB column length = pure $ EventV0 $ LongEventV0
   , version: mempty
   }
 
-
 leap :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Position -> Array Event_
 leap startM startB endM endB column position = pure $ EventV0 $ LeapEventV0
   { marker1Time: mbToTime startM startB
@@ -71,27 +71,6 @@ shift' i b = shift $ toNumber ((i * 4) + asInt b)
 shift'' :: Int -> Event_ -> Event_
 shift'' i = shift $ toNumber (i * 4)
 
-flipColumn :: Column -> Column
-flipColumn C1 = C16
-flipColumn C2 = C15
-flipColumn C3 = C14
-flipColumn C4 = C13
-flipColumn C5 = C12
-flipColumn C6 = C11
-flipColumn C7 = C10
-flipColumn C8 = C9
-flipColumn C9 = C8
-flipColumn C10 = C7
-flipColumn C11 = C6
-flipColumn C12 = C5
-flipColumn C13 = C4
-flipColumn C14 = C3
-flipColumn C15 = C2
-flipColumn C16 = C1
-
-mirror :: Event_ -> Event_
-mirror = toColumn flipColumn
-
 toColumn :: (Column -> Column) -> Event_ -> Event_
 toColumn f = go
   where
@@ -104,6 +83,7 @@ toColumn f = go
   go (EventV0 (LongEventV0 e)) = EventV0 $ LongEventV0 e
     { column = f e.column
     }
+
 shift :: Number -> Event_ -> Event_
 shift n' = go
   where
@@ -205,155 +185,106 @@ basic'' m1 b1 s1 m2 b2 s2 m3 b3 s3 m4 b4 s4 column = pure $ EventV0 $ BasicEvent
 basic' :: Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Int -> OneTwoThreeFour -> Column -> Array Event_
 basic' m1 b1 m2 b2 m3 b3 m4 b4 = basic'' m1 b1 0.0 m2 b2 0.0 m3 b3 0.0 m4 b4 0.0
 
-intro1 :: Array Event_
-intro1 = join
-  [ long 2 One 5 One C7 2.0
-  , long 6 One 9 One C9 2.0
-  , long 10 One 12 One C6 1.5
-  , leap 11 One 13 One C8 Position1
-  , long 12 One 14 One C10 1.5
-  , leap 13 One 15 One C8 Position2
-  , long 14 One 17 One C9 2.0
-  , long 16 One 19 One C10 1.0
-  , leap 16 Three 17 Three C8 Position1
-  , long 17 One 19 One C5 1.0
-  , leap 17 Three 18 Three C8 Position2
+intro :: Array Event_
+intro = join
+  [ long 1 One 3 One C8 2.0
+  , long 3 One 5 One C10 2.0
+  , long 5 One 7 One C8 2.0
+  , long 7 One 9 One C10 2.0
+  , leap 7 One 9 One C9 Position1
+  , long 9 One 11 One C8 2.0
+  , long 10 One 12 One C10 2.0
+  , long 11 One 13 One C7 2.0
+  , long 12 One 14 One C11 2.0
+  , long 13 One 15 One C8 2.0
+  , long 14 One 16 One C10 2.0
+  , leap 15 One 17 One C9 Position1
+  , long 15 One 17 One C7 2.0
+  , leap 16 One 18 One C9 Position1
+  , leap 16 Three 18 One C7 Position1
+  , leap 16 Three 18 One C11 Position1
+  , long 16 One 18 One C11 2.0
   ]
 
-ice1 :: Array Event_
-ice1 = join
-  [ basic1313 18 C7
-  , basic1313 20 C9
-  , basic1313 22 C7
-  , basic1313 23 C7
-  , basic1313 24 C9
-  , basic1313 25 C9
-  , basic3131 25 C9
-  , basic4242 25 C9
-  -----------------
-  , basic1313 26 C6
-  , basic2424 26 C7
-  , basic3131 26 C6
-  , basic4242 26 C7
-  --
-  , basic1313 27 C6
-  , basic2424 27 C7
-  , basic3131 27 C6
-  , basic4242 27 C7
-  , basic1313 27 C8
-  , basic2424 27 C9
-  , basic3131 27 C8
-  , basic4242 27 C9
-  --
-  , basic1234 28 C5
-  , basic1234 28 C6
-  , basic2341 28 C7
-  , basic2341 28 C8
-  , basic3412 28 C9
-  , basic4123 28 C10
-  , basic4123 28 C11
-  , basic4123 28 C12
-  --
-  , basic1234 29 C4
-  , basic1234 29 C6
+speedy1 :: Array Event_
+speedy1 = join
+  [ basic1234 17 C10 -- singleton
+  , basic1234 18 C8  -- singleton 
+  , basic1234 19 C9  -- singleton
+  , basic1234 20 C8  -- pair
+  , basic1234 20 C10    -- pair
+  , basic1234 21 C9  -- singleton
+  , basic1234 22 C8  -- pair
+  , basic1234 22 C10    -- pair
+  , basic1313 23 C7  -- pair
+  , basic1313 23 C11    -- pair
+  , leap 24 One 25 One C8 Position1   -- leap
+  , leap 24 One 25 One C10 Position1  -- leap
+  , basic1313 24 C9 -- singleton
+  -- cascade
+  , basic1234 25 C7  -- -
+  , basic2341 25 C8  --  -
+  , basic3412 25 C9  --   -
+  , basic4123 25 C10 --    -
+  -- cascade
+  , basic1234 26 C7  -- -
+  , basic2341 26 C8  --  -
+  , basic3412 26 C9  --   -
+  , basic4123 26 C10 --    -
+  -- reverse cascade
+  , basic1234 27 C11 --    -
+  , basic2341 27 C10 --   -
+  , basic3412 27 C9  --  -
+  , basic4123 27 C8  -- -
+  -- reverse cascade
+  , basic1234 28 C11 --    -
+  , basic2341 28 C10 --   -
+  , basic3412 28 C9  --  -
+  , basic4123 28 C8  -- -
+  -- staggered
   , basic1234 29 C7
-  , basic2341 29 C5
-  , basic2341 29 C6
   , basic2341 29 C8
-  , basic3412 29 C6
+  , basic1234 29 C9
+  , basic2341 29 C10
   , basic3412 29 C7
-  , basic3412 29 C9
-  , basic4123 29 C7
   , basic4123 29 C8
+  , basic3412 29 C9
   , basic4123 29 C10
+  -- 
+  , basic1234 30 C11
+  , basic2341 30 C10
+  , basic1234 30 C9
+  , basic2341 30 C8
+  , basic3412 30 C11
+  , basic4123 30 C10
+  , basic3412 30 C9
+  , basic4123 30 C8
   --
-  , cascade1122 30 C4
-  , cascade3344 30 C6
-  , cascade1122 31 C8
-  , cascade3344 31 C10
-  , cascade1122 32 C4
-  , cascade2233 32 C4
-  , cascade3344 32 C6
-  , cascade4411 32 C6
-  , cascade1122 33 C8
-  , cascade2233 33 C8
-  , cascade3344 33 C10
-  , cascade4411 33 C10
-  , long 32 Three 34 One C4 2.0
-  , long 33 One 34 One C5 1.0
-  , leap 33 Three 34 One C6 Position1
-  , leap 33 Four 34 Two C6 Position1
+  , basic1313 31 C5
+  , basic1313 31 C6
+  , basic1313 31 C8
+  , basic1313 31 C10
+  , basic1313 31 C12
+  , basic1313 31 C13
+  , basic1234 32 C7
+  , basic1234 32 C9
+  , leap 32 One 33 One C9 Position1
   ]
 
-fight1 :: Array Event_
-fight1 = join
-  [ fullPart
-  , map (mirror <<< shift'' 8) fullPart
-  , echoDilated $ map (shift'' 16) fullPart
-  , echoDilated $ map (mirror <<< shift'' 24) fullPart
-  ]
-  where
-  echoDilated :: Array Event_ -> Array Event_
-  echoDilated = foldl (\b a -> [ a, dilate 2.0 $ toColumn (_ <> C8) a ] <> b) []
-  cell1 n = join
-    [ leap1 n One C7 Position1
-    , leap1 n Two C9 Position2
-    , leap1 n Three C6 Position3
-    , leap1 n Four C5 Position4
-    , leap1 (n + 1) One C7 Position1
-    , long (n + 1) Two (n + 3) Two C6 2.0
-    , leap1 (n + 1) Three C9 Position3
-    , long (n + 1) Four (n + 3) Four C4 2.0
-    ]
-  fullPart = join
-    [ cell1 34
-    , cell1 36
-    , basic 37 Three Four One Two C7
-    , basic 37 Four One Two Three C7
-    , basic1313 38 C3
-    , basic1313 38 C4
-    , basic1313 38 C5
-    , basic1313 38 C6
-    , basic3131 38 C7
-    , basic3131 38 C8
-    , basic3131 38 C9
-    , basic3131 38 C10
-    , basic1313 39 C11
-    , basic1313 39 C12
-    , basic3131 39 C13
-    , leap 39 Four 40 Two C11 Position1
-    , basic1313 40 C3
-    , basic1313 40 C4
-    , basic1313 40 C5
-    , basic1313 40 C6
-    , basic2424 40 C5
-    , basic2424 40 C6
-    , basic3131 40 C7
-    , basic3131 40 C8
-    , basic3131 40 C9
-    , basic3131 40 C10
-    , basic4242 40 C9
-    , basic4242 40 C10
-    , basic1313 41 C11
-    , basic1313 41 C12
-    , basic2424 41 C12
-    , basic3131 41 C13
-    , basic4242 41 C13
-    , leap 41 Four 42 Two C11 Position1
-    ]
+speedy2 :: Array Event_
+speedy2 = map (shift'' 16) speedy1
 
-intro2 :: Array Event_
-intro2 = map (shift'' 64) intro1
+speedy3 :: Array Event_
+speedy3 = map (shift'' 32) speedy1
 
+middle :: Array Event_
+middle = map (shift'' 64) intro
 
-ice2 :: Array Event_
-ice2 = map (shift'' 64) ice1
-
-fight2 :: Array Event_
-fight2 = map (shift'' 64) fight1
+speedy4 :: Array Event_
+speedy4 = map (shift'' 64) speedy1
 
 outro :: Array Event_
-outro = map (shift'' 128) intro1
+outro = map (shift'' 96) intro
 
 type Events = V MultipleErrors (Array Event_)
 
@@ -390,14 +321,15 @@ validateEvents = traverseWithIndex \i -> case _ of
 
 piece :: forall m. MonadThrow Error m => m { track :: Track, events :: Array Event_ }
 piece = do
-  let events' = intro1 <> ice1 <> fight1 <> intro2 <> ice2 <> fight2 <> outro
+  let events' = intro <> speedy1 <> speedy2 <> speedy3 <> middle <> speedy4 <> outro
   events <- validation (throwError <<< error <<< show) pure (validateEvents events')
   pure
     { track: TrackV0
         { version: mempty
         , url: "https://cdn.filestackcontent.com/Chx54OpSmakW4Xs1I0rx"
-        , title: Just "NOISZ"
+        , title: Just "Speedy - Draft 3"
         , private: true
+        , whitelist: Whitelist []
         , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
         }
     , events: events # sortBy

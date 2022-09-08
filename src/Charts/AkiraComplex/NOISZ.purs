@@ -150,7 +150,7 @@ import Data.TraversableWithIndex (traverseWithIndex)
 import Data.Validation.Semigroup (V, invalid, validation)
 import Effect.Exception (Error, error)
 import Foreign (ForeignError(..), MultipleErrors)
-import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..))
+import Joyride.Types (Column(..), EventV0(..), Event_(..), Position(..), Track(..), Whitelist(..))
 
 data OneTwoThreeFour = One | Two | Three | Four
 
@@ -205,22 +205,24 @@ shift'' :: Int -> Event_ -> Event_
 shift'' i = shift $ toNumber (i * 4)
 
 flipColumn :: Column -> Column
-flipColumn C1 = C16
-flipColumn C2 = C15
-flipColumn C3 = C14
-flipColumn C4 = C13
-flipColumn C5 = C12
-flipColumn C6 = C11
-flipColumn C7 = C10
-flipColumn C8 = C9
-flipColumn C9 = C8
-flipColumn C10 = C7
-flipColumn C11 = C6
-flipColumn C12 = C5
-flipColumn C13 = C4
-flipColumn C14 = C3
-flipColumn C15 = C2
-flipColumn C16 = C1
+flipColumn C1 = C17
+flipColumn C2 = C16
+flipColumn C3 = C15
+flipColumn C4 = C14
+flipColumn C5 = C13
+flipColumn C6 = C12
+flipColumn C7 = C11
+flipColumn C8 = C10
+flipColumn C9 = C9
+flipColumn C10 = C8
+flipColumn C11 = C7
+flipColumn C12 = C6
+flipColumn C13 = C5
+flipColumn C14 = C4
+flipColumn C15 = C3
+flipColumn C16 = C2
+flipColumn C17 = C1
+
 
 mirror :: Event_ -> Event_
 mirror = toColumn flipColumn
@@ -531,6 +533,7 @@ piece = do
         , url: "https://cdn.filestackcontent.com/kG1ZasfRPSvsRd2QAMux"
         , title: Just "NOISZ"
         , private: true
+        , whitelist: Whitelist []
         , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
         }
     , events: events # sortBy
