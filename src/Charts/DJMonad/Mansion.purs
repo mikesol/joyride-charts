@@ -348,6 +348,8 @@ rise =
     , basic1234 13 C10
     , basic2341 13 C7
     , basic2341 13 C11
+    , basic3412 13 C8
+    , basic3412 13 C10
     , basic3412 13 C6
     , basic3412 13 C12
     , basic4123 13 C5
@@ -360,6 +362,8 @@ rise =
     , leap1 14 Three C9 Position2
     , basic3412 14 C6
     , basic3412 14 C12
+    , basic3412 14 C8
+    , basic3412 14 C10
     , leap1 14 Four C9 Position3
     , basic4123 14 C5
     , basic4123 14 C13
@@ -387,10 +391,10 @@ rise =
             , basic3412 15 C10
             , basic4123 15 C7
             , basic4123 15 C11
-            , basic1234 15 C6
-            , basic1234 15 C12
-            , basic2341 15 C5
-            , basic2341 15 C13
+            , basic1234 16 C6
+            , basic1234 16 C12
+            , basic2341 16 C5
+            , basic2341 16 C13
             ]
         )
     <>
@@ -415,10 +419,10 @@ rise =
             , basic3412 16 C10
             , basic4123 16 C7
             , basic4123 16 C11
-            , basic1234 16 C6
-            , basic1234 16 C12
-            , basic2341 16 C5
-            , basic2341 16 C13
+            , basic1234 17 C6
+            , basic1234 17 C12
+            , basic2341 17 C5
+            , basic2341 17 C13
             ]
         )
     <>
@@ -438,33 +442,22 @@ suspense = join
   , long1 18 Three C10 2.0
   , long1 18 Four C9 2.0
   , long1 18 Four C11 2.0
-  , leap 19 One 19 Three C8 Position1
-  , leap 19 Two 19 Four C10 Position2
-  , leap 19 Three 20 One C9 Position3
-  , leap 19 Four 20 Two C11 Position4
-  , leap 20 One 20 Three C7 Position1
-  , leap 20 Two 20 Four C10 Position2
-  , leap 20 Three 21 One C8 Position3
-  , leap 20 Four 21 Two C9 Position4
-  --
-  , leap 21 One 21 Three C10 Position1
-  , leap 21 Two 21 Four C8 Position2
-  , leap 21 Three 22 One C9 Position3
-  , leap 21 Four 22 Two C7 Position4
-  , leap 22 One 22 Three C11 Position1
-  , leap 22 Two 22 Four C8 Position2
-  , leap 22 Three 23 One C10 Position3
-  , leap 22 Four 23 Two C9 Position4
-
   ]
 
 laugh :: Array Event_
 laugh = join
-  [
+  [ leap 19 One 19 Three C6 Position1
+  , leap 19 Two 19 Four C12 Position2
+  , leap 19 Three 20 One C5 Position3
+  , leap 19 Four 20 Two C13 Position4
+  , leap 20 One 20 Three C6 Position1
+  , leap 20 Two 20 Four C12 Position2
+  , leap 20 Three 21 One C5 Position3
+  , leap 20 Four 21 Two C13 Position4
   ]
 
 groove :: Array Event_
-groove = go <> map (shift'' 8) go <>
+groove = go <> map (shift'' 4) go <>
   join
     [ leap1 25 One C7 Position1
     , leap1 25 Three C11 Position2
@@ -583,7 +576,7 @@ piece = do
     { track: TrackV0
         { version: mempty
         , url: "https://cdn.filestackcontent.com/sgDrFGySIgSLSlARecMQ"
-        , title: Just "Mystery Mansion Madness - Verison 2"
+        , title: Just "Mystery Mansion Madness - Verison 3"
         , private: true
         , whitelist: Whitelist []
         , owner: "OKA4OPZguFZOv9p58TBbokciIlq2"
