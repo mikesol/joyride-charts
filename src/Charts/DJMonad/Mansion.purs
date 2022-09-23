@@ -268,43 +268,278 @@ squeezeFromHead n l = map (squeeze n stt) l
 
 intro :: Array Event_
 intro = join
-  [ 
+  [ long1 1 One C8 2.0
+  , long1 2 One C10 2.0
+  , long1 3 One C8 2.0
+  , long1 4 One C10 2.0
+  , leap1 4 One C9 Position1
   ]
 
 intro'beat :: Array Event_
 intro'beat = join
-  [ 
+  [ long1 5 One C8 2.0
+  , basic3412 5 C9
+  , long1 6 One C10 2.0
+  , basic3412 6 C9
+  , long1 7 One C8 2.0
+  , basic3412 7 C9
+  , long1 8 One C10 2.0
+  , basic3412 8 C7
+  , leap1 8 One C9 Position1
+  , basic3412 8 C11
   ]
 
 rise :: Array Event_
-rise = squeezeFromHead 0.5 $ join
-  [ 
-  ]
+rise =
+  join
+    [ basic1234 9 C8
+    , basic1234 9 C10
+    , leap1 9 One C9 Position1
+    , basic2341 9 C8
+    , basic2341 9 C10
+    , basic3412 9 C8
+    , basic3412 9 C10
+    , basic4123 9 C8
+    , basic4123 9 C10
+    , basic1234 10 C8
+    , basic1234 10 C10
+    , basic2341 10 C8
+    , basic2341 10 C10
+    , leap1 10 Three C9 Position2
+    , basic3412 10 C8
+    , basic3412 10 C10
+    , leap1 10 Four C9 Position3
+    , basic4123 10 C8
+    , basic4123 10 C10
+    , leap1 11 One C9 Position1
+    , basic1234 11 C8
+    , basic1234 11 C10
+    , basic1234 11 C7
+    , basic1234 11 C11
+    , basic2341 11 C8
+    , basic2341 11 C10
+    , basic2341 11 C7
+    , basic2341 11 C11
+    , basic3412 11 C8
+    , basic3412 11 C10
+    , basic3412 11 C7
+    , basic3412 11 C11
+    , basic4123 11 C8
+    , basic4123 11 C10
+    , basic4123 11 C7
+    , basic4123 11 C11
+    --
+    , basic1234 12 C8
+    , basic1234 12 C10
+    , basic1234 12 C7
+    , basic1234 12 C11
+    , basic2341 12 C8
+    , basic2341 12 C10
+    , basic2341 12 C7
+    , basic2341 12 C11
+    , leap1 12 Three C9 Position2
+    , basic3412 12 C7
+    , basic3412 12 C11
+    , leap1 12 Four C9 Position3
+    , basic4123 12 C8
+    , basic4123 12 C10
+    , leap1 13 One C9 Position1
+    , basic1234 13 C8
+    , basic1234 13 C10
+    , basic2341 13 C7
+    , basic2341 13 C11
+    , basic3412 13 C6
+    , basic3412 13 C12
+    , basic4123 13 C5
+    , basic4123 13 C13
+    --
+    , basic1234 14 C8
+    , basic1234 14 C10
+    , basic2341 14 C7
+    , basic2341 14 C11
+    , leap1 14 Three C9 Position2
+    , basic3412 14 C6
+    , basic3412 14 C12
+    , leap1 14 Four C9 Position3
+    , basic4123 14 C5
+    , basic4123 14 C13
+    , leap1 15 One C9 Position1
+    ]
+    <>
+      --
+      squeezeFromHead 0.5
+        ( join
+            [ basic1234 15 C8
+            , basic1234 15 C10
+            , basic2341 15 C7
+            , basic2341 15 C11
+            , basic3412 15 C6
+            , basic3412 15 C12
+            , basic4123 15 C5
+            , basic4123 15 C13
+            ]
+        )
+    <>
+      --
+      squeezeFromHead 0.5
+        ( join
+            [ basic3412 15 C8
+            , basic3412 15 C10
+            , basic4123 15 C7
+            , basic4123 15 C11
+            , basic1234 15 C6
+            , basic1234 15 C12
+            , basic2341 15 C5
+            , basic2341 15 C13
+            ]
+        )
+    <>
+      --
+      squeezeFromHead 0.5
+        ( join
+            [ basic1234 16 C8
+            , basic1234 16 C10
+            , basic2341 16 C7
+            , basic2341 16 C11
+            , basic3412 16 C6
+            , basic3412 16 C12
+            , basic4123 16 C5
+            , basic4123 16 C13
+            ]
+        )
+    <>
+      --
+      squeezeFromHead 0.5
+        ( join
+            [ basic3412 16 C8
+            , basic3412 16 C10
+            , basic4123 16 C7
+            , basic4123 16 C11
+            , basic1234 16 C6
+            , basic1234 16 C12
+            , basic2341 16 C5
+            , basic2341 16 C13
+            ]
+        )
+    <>
+      --
+      join
+        [ leap1 16 Three C9 Position2
+        , leap1 16 Four C9 Position3
+        ]
 
 suspense :: Array Event_
 suspense = join
-  [ 
+  [ long1 17 One C8 2.0
+  , long1 17 Three C10 2.0
+  , long1 18 One C8 2.0
+  , long1 18 Two C9 2.0
+  , long1 18 Two C7 2.0
+  , long1 18 Three C10 2.0
+  , long1 18 Four C9 2.0
+  , long1 18 Four C11 2.0
+  , leap 19 One 19 Three C8 Position1
+  , leap 19 Two 19 Four C10 Position2
+  , leap 19 Three 19 One C9 Position3
+  , leap 19 Four 19 Two C11 Position4
+  , leap 20 One 19 Three C7 Position1
+  , leap 20 Two 19 Four C10 Position2
+  , leap 20 Three 19 One C8 Position3
+  , leap 20 Four 19 Two C9 Position4
+  --
+  , leap 21 One 19 Three C10 Position1
+  , leap 21 Two 19 Four C8 Position2
+  , leap 21 Three 19 One C9 Position3
+  , leap 21 Four 19 Two C7 Position4
+  , leap 22 One 19 Three C11 Position1
+  , leap 22 Two 19 Four C8 Position2
+  , leap 22 Three 19 One C10 Position3
+  , leap 22 Four 19 Two C9 Position4
+
   ]
 
 laugh :: Array Event_
 laugh = join
-  [ 
+  [
   ]
 
 groove :: Array Event_
-groove = join
-  [ 
-  ]
+groove = go <> map (shift'' 8) go <>
+  join
+    [ leap1 25 One C7 Position1
+    , leap1 25 Three C11 Position2
+    , leap1 26 One C4 Position3
+    , leap1 26 Three C10 Position4
+    , leap1 27 One C7 Position1
+    , leap1 27 Three C12 Position2
+    , leap1 28 One C11 Position3
+    , leap1 29 Three C5 Position4
+    ]
+  where
+  go =
+    join
+      [ basic1234 21 C8
+      , basic1234 21 C10
+      , basic2341 21 C8
+      , basic2341 21 C10
+      , basic3412 21 C9
+      , basic4123 21 C8
+      , basic4123 21 C10
+      --
+      , basic1234 22 C7
+      , basic1234 22 C8
+      , basic1234 22 C10
+      , basic1234 22 C11
+      , basic2341 22 C8
+      , basic2341 22 C10
+      , basic2341 22 C7
+      , basic2341 22 C11
+      , basic3412 22 C9
+      , basic4123 22 C8
+      , basic4123 22 C10
+      , basic4123 22 C7
+      , basic4123 22 C11
+      --
+      , basic1234 23 C8
+      , basic2341 23 C8
+      , basic2341 23 C9
+      , basic3412 23 C8
+      , basic3412 23 C9
+      , basic3412 23 C10
+      , basic4123 23 C8
+      , basic4123 23 C9
+      , basic4123 23 C10
+      , basic4123 23 C11
+      ] <> squeezeFromHead 0.5
+      ( join
+          [ basic1234 24 C5
+          , basic2341 24 C6
+          , basic3412 24 C7
+          , basic4123 24 C8
+          , basic1234 25 C9
+          , basic2341 25 C10
+          , basic3412 25 C11
+          , basic4123 25 C12
+          ]
+      )
 
 groove2 :: Array Event_
-groove2 =
-  join
-    [ 
-    ]
+groove2 = map (shift'' 8) (map (toColumn (C12 <> _)) groove <> map (toColumn (C4 <> _)) groove)
 
 outro :: Array Event_
 outro = join
-  [ 
+  [ long1 37 One C9 3.0
+  , long1 38 One C8 3.0
+  , long1 39 One C10 3.0
+  , long1 40 One C9 3.0
+  , long1 41 One C8 1.5
+  , long1 41 Three C10 1.5
+  , long1 42 One C9 1.5
+  , long1 42 Three C8 1.5
+  , long1 41 One C10 1.5
+  , long1 41 Three C9 1.5
+  , long1 42 One C8 1.5
+  , long1 42 Three C10 1.5
   ]
 
 type Events = V MultipleErrors (Array Event_)
