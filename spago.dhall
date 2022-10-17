@@ -21,6 +21,7 @@ to generate this file without the comments in this block.
   , "integers"
   , "joyride-types"
   , "maybe"
+  , "numbers"
   , "prelude"
   , "simple-json"
   , "transformers"

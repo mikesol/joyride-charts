@@ -7,11 +7,11 @@ import Prelude
 -- import Charts.Jun.Imp as Imp
 -- import Charts.Testing.Stress as Stress
 -- import Charts.Testing.Simple as Simple
-import Charts.DJMonad.MysteryMansionMadness as MysteryMansionMadness
+import Charts.DJMonad.MysteryMansionMadnessRedo as MysteryMansionMadnessRedo
 import Effect (Effect)
 import Effect.Console (log)
 import Simple.JSON as JSON
 
 main :: Effect Unit
 main = do
-  MysteryMansionMadness.piece >>= log <<< JSON.writeJSON 
+  MysteryMansionMadnessRedo.piece >>= log <<< JSON.writeJSON 
