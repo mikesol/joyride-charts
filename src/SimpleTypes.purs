@@ -1,6 +1,8 @@
 module SimpleTypes
   ( Column
+  , Rail(..)
   , Smpl
+  , SmplRail
   , farLeft
   , farRight
   , left
@@ -10,7 +12,10 @@ module SimpleTypes
   , overThree
   , overTwo
   , right
-  ) where
+  , leftRail
+  , rightRail
+  )
+  where
 
 import Prelude
 
@@ -61,4 +66,28 @@ instance JSON.ReadForeign Column where
 type Smpl =
   { timing :: Number
   , column :: Column
+  }
+
+
+newtype Rail = Rail Number
+
+derive instance Eq Rail
+derive instance Ord Rail
+
+leftRail ∷ Rail
+leftRail = Rail (-1.0)
+
+rightRail ∷ Rail
+rightRail = Rail (1.0)
+
+
+instance JSON.WriteForeign Rail where
+  writeImpl (Rail c) = JSON.writeImpl c
+
+instance JSON.ReadForeign Rail where
+  readImpl c = Rail <$> JSON.readImpl c
+
+type SmplRail =
+  { timing :: Number
+  , column :: Rail
   }
