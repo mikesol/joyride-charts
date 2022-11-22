@@ -14,6 +14,7 @@ to generate this file without the comments in this block.
 , dependencies =
   [ "arrays"
   , "console"
+  , "control"
   , "effect"
   , "exceptions"
   , "foldable-traversable"
@@ -21,10 +22,12 @@ to generate this file without the comments in this block.
   , "integers"
   , "joyride-types"
   , "maybe"
+  , "newtype"
   , "numbers"
   , "prelude"
   , "simple-json"
   , "transformers"
+  , "tuples"
   , "validation"
   ]
 , packages = ./packages.dhall
